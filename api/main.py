@@ -13,7 +13,7 @@ class ReviewRequest(BaseModel):
 def predict_review(req: ReviewRequest):
     try:
         prediction = predict(req.text, model, vectorizer)
-        return {"prediction": prediction}
+        return {"prediction": int(prediction)}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

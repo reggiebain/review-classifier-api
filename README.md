@@ -2,10 +2,11 @@
 ### A text classification pipeline (train → evaluate → serve)
 A FastAPI project to classify text reviews as positive or negative.
 
-- FastAPI endpoints for model prediction
-- A test suite with pytest
-- A GitHub Actions CI workflow
-- Commands via Makefile
+## Features
+- Logistic regression text classifier
+- FastAPI web interface with Swagger docs at `/docs`
+- SQLite logging of predictions to `data/predictions.db`
+- Auto-retrain endpoint to refresh model on-the-fly
 
 ## Getting Started
 ```bash
@@ -22,9 +23,11 @@ make docker-run
 
 ## API Endpoints
 - `POST /predict` {"text": "some review"}
+- `POST /retrain` retrains model from source data and reloads it
 - `GET /health`
 
 ### Package Files Overview
+```
 project_root/
 ├── api/
 │   ├── main.py
@@ -51,3 +54,4 @@ project_root/
 ├── README.md
 ├── requirements.txt
 └── pyproject.toml  # optional for formatting/linting config
+```
