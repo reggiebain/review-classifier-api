@@ -10,4 +10,3 @@ httpx
 pytest-cov
 black
 mypy
-sqlite3
