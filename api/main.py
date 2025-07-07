@@ -11,11 +11,14 @@ app = FastAPI()
 model, vectorizer = load_model()
 DB_PATH = "data/predictions.db"
 
+
 class ReviewRequest(BaseModel):
     text: str
 
+
 class BatchReviewRequest(BaseModel):
     texts: List[str]
+
 
 @app.post("/predict")
 def predict_review(req: ReviewRequest) -> dict:
@@ -26,6 +29,7 @@ def predict_review(req: ReviewRequest) -> dict:
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
 @app.post("/predict_batch")
 def predict_batch(req: BatchReviewRequest) -> dict:
     try:
@@ -35,6 +39,7 @@ def predict_batch(req: BatchReviewRequest) -> dict:
         return {"predictions": [int(p) for p in predictions]}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
 
 @app.get("/logs")
 def get_logs():
@@ -50,6 +55,7 @@ def get_logs():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
 @app.post("/retrain")
 def retrain() -> dict:
     try:
@@ -60,9 +66,11 @@ def retrain() -> dict:
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
 @app.get("/health")
 def health() -> dict:
     return {"status": "ok"}
+
 
 def log_prediction(text: str, prediction: int) -> None:
     conn = sqlite3.connect(DB_PATH)
