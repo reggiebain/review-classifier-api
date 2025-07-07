@@ -9,7 +9,8 @@ serve:
 	uvicorn api.main:app --reload
 
 docker-build:
-	docker build -t review-api .
+	docker build --progress=plain -t review-api .
+	
 
 docker-run:
 	docker run -p 8000:8000 review-api

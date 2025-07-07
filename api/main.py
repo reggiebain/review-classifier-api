@@ -7,22 +7,18 @@ from typing import List
 from datetime import datetime
 import os
 
-
 app = FastAPI()
 model, vectorizer = load_model()
 DB_PATH = "data/predictions.db"
 
-
 class ReviewRequest(BaseModel):
     text: str
-
 
 class BatchReviewRequest(BaseModel):
     texts: List[str]
 
-
 @app.post("/predict")
-def predict_review(req: ReviewRequest):
+def predict_review(req: ReviewRequest) -> dict:
     try:
         prediction = int(predict(req.text, model, vectorizer))
         log_prediction(req.text, prediction)
@@ -30,9 +26,8 @@ def predict_review(req: ReviewRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-
 @app.post("/predict_batch")
-def predict_batch(req: BatchReviewRequest):
+def predict_batch(req: BatchReviewRequest) -> dict:
     try:
         predictions = predict(req.texts, model, vectorizer)
         for text, label in zip(req.texts, predictions):
@@ -40,7 +35,6 @@ def predict_batch(req: BatchReviewRequest):
         return {"predictions": [int(p) for p in predictions]}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
 
 @app.get("/logs")
 def get_logs():
@@ -56,9 +50,8 @@ def get_logs():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-
 @app.post("/retrain")
-def retrain():
+def retrain() -> dict:
     try:
         os.system("python model/train.py")
         global model, vectorizer
@@ -67,13 +60,11 @@ def retrain():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-
 @app.get("/health")
-def health():
+def health() -> dict:
     return {"status": "ok"}
 
-
-def log_prediction(text: str, prediction: int):
+def log_prediction(text: str, prediction: int) -> None:
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
     c.execute(
