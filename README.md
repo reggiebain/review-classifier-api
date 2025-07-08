@@ -1,57 +1,51 @@
 # Review Classifier API
-### A text classification pipeline (train → evaluate → serve)
-A FastAPI project to classify text reviews as positive or negative.
 
-## Features
-- Logistic regression text classifier
-- FastAPI web interface with Swagger docs at `/docs`
-- SQLite logging of predictions to `data/predictions.db`
-- Auto-retrain endpoint to refresh model on-the-fly
+A lightweight, production-ready sentiment analysis API built with FastAPI and scikit-learn.
 
-## Getting Started
+## 🚀 Features
+- Predict sentiment from single or multiple review texts
+- Log predictions in a local SQLite database
+- RESTful API with automatic Swagger UI
+- Dockerized for portability
+- CI pipeline with type checking, linting, and test coverage
+
+## 📦 Project Structure
 ```bash
+├── api/                # FastAPI endpoints and model logic
+├── model/              # Model training and evaluation code
+├── tests/              # Unit tests
+├── data/               # SQLite database (auto-generated)
+├── docs/               # Markdown developer and API documentation
+├── requirements.txt    # Python dependencies
+├── Dockerfile          # Docker container config
+├── Makefile            # Common dev tasks
+└── .github/workflows/  # GitHub Actions CI config
+```
+## Getting Started
+### Local Development
+```
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
 make train
-make evaluate
 make serve
 ```
+Visit the API at: http://localhost:8000/docs
 
-## With Docker
-```bash
+### With Docker
+```
 make docker-build
 make docker-run
 ```
 
-## API Endpoints
-- `POST /predict` {"text": "some review"}
-- `POST /retrain` retrains model from source data and reloads it
-- `GET /health`
+## CI/CD
+Runs on push to GitHub:
 
-### Package Files Overview
-```
-project_root/
-├── api/
-│   ├── main.py
-│   └── model.py
-│
-├── data/
-│   └── raw_reviews.csv  # placeholder
-│
-├── model/
-│   ├── train.py
-│   └── evaluate.py
-│
-├── tests/
-│   ├── test_api.py
-│   └── test_model.py
-│
-├── .github/
-│   └── workflows/
-│       └── ci.yml
-│
-├── .gitignore
-├── Dockerfile
-├── Makefile
-├── README.md
-├── requirements.txt
-└── pyproject.toml  # optional for formatting/linting config
-```
+- Code formatting with Black
+
+- Type checking with MyPy
+
+- Model training
+
+- Unit tests with pytest + coverage
+
