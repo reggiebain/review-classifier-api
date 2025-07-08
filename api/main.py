@@ -20,29 +20,51 @@ class BatchReviewRequest(BaseModel):
     texts: List[str]
 
 
-@app.post("/predict")
-def predict_review(req: ReviewRequest) -> dict:
+class PredictionResponse(BaseModel):
+    prediction: int
+
+
+class BatchPredictionResponse(BaseModel):
+    predictions: List[int]
+
+
+class PredictionLog(BaseModel):
+    timestamp: str
+    review: str
+    prediction: int
+
+
+@app.post("/predict", response_model=PredictionResponse)
+def predict_review(req: ReviewRequest) -> PredictionResponse:
     try:
-        prediction = int(predict(req.text, model, vectorizer))
+        result = predict(req.text, model, vectorizer)
+        if isinstance(result, list):
+            prediction = int(result[0])
+        else:
+            prediction = int(result)
         log_prediction(req.text, prediction)
-        return {"prediction": int(prediction)}
+        return PredictionResponse(prediction=prediction)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@app.post("/predict_batch")
-def predict_batch(req: BatchReviewRequest) -> dict:
+@app.post("/predict_batch", response_model=BatchPredictionResponse)
+def predict_batch(req: BatchReviewRequest) -> BatchPredictionResponse:
     try:
-        predictions = predict(req.texts, model, vectorizer)
+        result = predict(req.texts, model, vectorizer)
+        if isinstance(result, int):
+            predictions = [result]
+        else:
+            predictions = result
         for text, label in zip(req.texts, predictions):
             log_prediction(text, int(label))
-        return {"predictions": [int(p) for p in predictions]}
+        return BatchPredictionResponse(predictions=[int(p) for p in predictions])
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@app.get("/logs")
-def get_logs():
+@app.get("/logs", response_model=List[PredictionLog])
+def get_logs() -> List[PredictionLog]:
     try:
         conn = sqlite3.connect(DB_PATH)
         c = conn.cursor()
@@ -51,7 +73,9 @@ def get_logs():
         )
         rows = c.fetchall()
         conn.close()
-        return [{"timestamp": r[0], "review": r[1], "prediction": r[2]} for r in rows]
+        return [
+            PredictionLog(timestamp=r[0], review=r[1], prediction=r[2]) for r in rows
+        ]
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

@@ -13,7 +13,10 @@ def load_model() -> Tuple[Any, Any]:
     vectorizer = joblib.load(VECTORIZER_PATH)
     return model, vectorizer
 
-def predict(text: Union[str, List[str]], model: Any, vectorizer: Any) -> Union[int, List[int]]:
+
+def predict(
+    text: Union[str, List[str]], model: Any, vectorizer: Any
+) -> Union[int, List[int]]:
     if isinstance(text, str):
         X = vectorizer.transform([text])
         return int(model.predict(X)[0])
