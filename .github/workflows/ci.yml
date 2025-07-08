@@ -36,4 +36,5 @@ jobs:
       - name: Run tests with coverage
         run: |
           pip install pytest-cov
+          export PYTHONPATH=.
           pytest --cov=api --cov=model --cov-report=term-missing
