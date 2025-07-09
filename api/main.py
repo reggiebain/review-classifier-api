@@ -7,7 +7,23 @@ from typing import List
 from datetime import datetime
 import os
 
-app = FastAPI()
+app = FastAPI(
+    title="Review Classifier API",
+    description="""
+A simple machine learning API for predicting sentiment of a review made using scikit-learn (logistic regression).  
+Built by Reggie Bain.
+""",
+    version="1.0.0",
+    contact={
+        "name": "Reggie Bain",
+        "url": "https://reggiebain.github.io/",
+    },
+    license_info={
+        "name": "MIT License",
+        "url": "https://opensource.org/licenses/MIT",
+    },
+)
+
 model, vectorizer = load_model()
 DB_PATH = "data/predictions.db"
 
